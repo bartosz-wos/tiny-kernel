@@ -33,6 +33,9 @@ struct sbiret sbi_call(long arg0, long arg1, long arg2, long arg3, long arg4, lo
   return (struct sbiret){ .error = a0, .value = a1 };
 }
 
+void putchar(char c){
+  sbi_call(c, 0, 0, 0, 0, 0, 0, 0, 1);
+}
 
 void kernel_main(void){
   memset(__bss, 0, (size_t)__bss_end - (size_t)__bss);
