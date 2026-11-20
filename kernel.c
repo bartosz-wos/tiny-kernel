@@ -37,6 +37,9 @@ void kernel_main(void){
   printf("\n\nhello %s\n", "world");
   printf("1 + 2 = %d, %x\n", 1 + 2, 0x1234abcd);
 
+  WRITE_CSR(stvec, (uint32_t)kernel_entry);
+  __asm__ __volatile__("unimp");
+
   for(;;){
     __asm__ __volatile__("wfi");
   }
