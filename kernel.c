@@ -31,31 +31,6 @@ void putchar(char c){
   sbi_call(c, 0, 0, 0, 0, 0, 0, 1);
 }
 
-void kernel_main(void){
-  memset(__bss, 0, (size_t)__bss_end - (size_t)__bss);
-
-  printf("\n\nhello %s\n", "world");
-  printf("1 + 2 = %d, %x\n", 1 + 2, 0x1234abcd);
-
-  WRITE_CSR(stvec, (uint32_t)kernel_entry);
-  __asm__ __volatile__("unimp");
-
-  for(;;){
-    __asm__ __volatile__("wfi");
-  }
-}
-
-__attribute__((section(".text.boot")))
-__attribute__((naked))
-void boot(void){
-  __asm__ __volatile__(
-    "mv sp, %[stack_top]\n"
-    "j kernel_main\n"
-    :
-    : [stack_top] "r"(__stack_top)
-  );
-}
-
 void handle_trap(struct trap_frame* f){
   uint32_t scause = READ_CSR(scause);
   uint32_t stval = READ_CSR(stval);
@@ -142,3 +117,28 @@ void kernel_entry(void){
   );
 }
 
+
+void kernel_main(void){
+  memset(__bss, 0, (size_t)__bss_end - (size_t)__bss);
+
+  printf("\n\nhello %s\n", "world");
+  printf("1 + 2 = %d, %x\n", 1 + 2, 0x1234abcd);
+
+  WRITE_CSR(stvec, (uint32_t)kernel_entry);
+  __asm__ __volatile__("unimp");
+
+  for(;;){
+    __asm__ __volatile__("wfi");
+  }
+}
+
+__attribute__((section(".text.boot")))
+__attribute__((naked))
+void boot(void){
+  __asm__ __volatile__(
+    "mv sp, %[stack_top]\n"
+    "j kernel_main\n"
+    :
+    : [stack_top] "r"(__stack_top)
+  );
+}
